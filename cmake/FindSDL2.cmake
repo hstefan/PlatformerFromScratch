@@ -1,0 +1,13 @@
+if(MSVC)
+  set(SDL2_INCLUDE_DIR
+    external/SDL2/include
+  )
+  set(SDL2_LIBRARIES
+    ${EXTERNAL_DEPENDENCIES_DIR}/SDL2/lib/x64/SDL2.lib
+    ${EXTERNAL_DEPENDENCIES_DIR}/SDL2/lib/x64/SDL2main.lib
+    ${EXTERNAL_DEPENDENCIES_DIR}/SDL2/lib/x64/SDL2test.lib
+  )
+  set(SDL2_DYNAMIC_LIBRARIES
+    ${EXTERNAL_DEPENDENCIES_DIR}/SDL2/lib/x64/SDL2.dll
+  )
+endif()

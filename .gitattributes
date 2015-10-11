@@ -1,0 +1,5 @@
+﻿* text=auto
+
+*.hpp eol=lf
+*.cpp eol=lf
+CMakeLists.txt eol=lf
