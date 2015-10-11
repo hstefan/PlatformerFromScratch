@@ -13,8 +13,16 @@ set(EXTERNAL_DEPENDENCIES_DIR ${PROJECT_SOURCE_DIR}/external)
 find_package(OpenGL REQUIRED)
 find_package(SDL2 REQUIRED)
 
+if(MSVC)
+  set(GLEW_DIR ${EXTERNAL_DEPENDENCIES_DIR}/glew)
+  set(GLEW_INCLUDE_DIR ${GLEW_DIR}/include)
+  set(GLEW_LIBRARIES ${GLEW_DIR}/lib/Release/x64/glew32.lib)
+  set(GLEW_DYNAMIC_LIBRARIES ${GLEW_DIR}/bin/Release/x64/glew32.dll)
+endif()
+
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${OPENGL_INCLUDE_DIR})
+include_directories(${GLEW_INCLUDE_DIR})
 
 include_directories(src)
 
@@ -27,10 +35,10 @@ set(HEADERS
 
 add_executable(PlatformerFromScratch ${SOURCES} ${HEADERS})
 
-target_link_libraries(PlatformerFromScratch ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES})
+target_link_libraries(PlatformerFromScratch ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${GLEW_LIBRARIES})
 
 if (MSVC)
-  set(CONFIG_FILES ${SDL2_DYNAMIC_LIBRARIES})
+  set(CONFIG_FILES ${SDL2_DYNAMIC_LIBRARIES} ${GLEW_DYNAMIC_LIBRARIES})
   add_custom_target(CopyBinaries)
   foreach(ConfigFile ${CONFIG_FILES})
     add_custom_command(TARGET CopyBinaries
