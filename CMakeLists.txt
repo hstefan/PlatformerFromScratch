@@ -49,3 +49,7 @@ if (MSVC)
 
   add_dependencies(PlatformerFromScratch CopyBinaries)
 endif()
+
+set(DBG_WORKING_DIR ${PROJECT_SOURCE_DIR})
+configure_file(config/debug_dir.vcxproj.user.in
+  ${CMAKE_CURRENT_BINARY_DIR}/PlatformerFromScratch.vcxproj.user @ONLY)
