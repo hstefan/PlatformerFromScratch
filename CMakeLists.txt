@@ -20,9 +20,12 @@ if(MSVC)
   set(GLEW_DYNAMIC_LIBRARIES ${GLEW_DIR}/bin/Release/x64/glew32.dll)
 endif()
 
+set(STB_INCLUDE_DIR ${EXTERNAL_DEPENDENCIES_DIR}/stb)
+
 include_directories(${SDL2_INCLUDE_DIR})
 include_directories(${OPENGL_INCLUDE_DIR})
 include_directories(${GLEW_INCLUDE_DIR})
+include_directories(${STB_INCLUDE_DIR})
 
 include_directories(src)
 
