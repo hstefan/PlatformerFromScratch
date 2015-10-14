@@ -31,12 +31,17 @@ include_directories(src)
 
 set(SOURCES
   src/main.cpp
+  src/Texture.cpp
 )
 
 set(HEADERS
+  src/Texture.hpp
 )
 
-add_executable(PlatformerFromScratch ${SOURCES} ${HEADERS})
+add_executable(PlatformerFromScratch
+  ${SOURCES}
+  ${HEADERS}
+)
 
 target_link_libraries(PlatformerFromScratch ${OPENGL_LIBRARIES} ${SDL2_LIBRARIES} ${GLEW_LIBRARIES})
 
