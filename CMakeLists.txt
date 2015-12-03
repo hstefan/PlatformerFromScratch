@@ -32,10 +32,12 @@ include_directories(src)
 set(SOURCES
   src/main.cpp
   src/gl/Texture.cpp
+  src/gl/Shader.cpp
 )
 
 set(HEADERS
   src/gl/Texture.hpp
+  src/gl/Shader.hpp
   src/NonCopyable.hpp
   src/debug/Debug.hpp
 )
