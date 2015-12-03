@@ -39,6 +39,7 @@ set(SOURCES
 set(HEADERS
   src/gl/Texture.hpp
   src/gl/Shader.hpp
+  src/gl/ShaderProgram.hpp
   src/gl/BufferObject.hpp
   src/gl/VertexArray.hpp
   src/NonCopyable.hpp
