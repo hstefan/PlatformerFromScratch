@@ -36,6 +36,7 @@ set(SOURCES
 
 set(HEADERS
   src/Texture.hpp
+  src/NonCopyable.hpp
 )
 
 add_executable(PlatformerFromScratch
