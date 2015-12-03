@@ -2,31 +2,94 @@
 #include <chrono>
 #include <thread>
 #include <iostream>
-#include <GL/glew.h>
+#include <fstream>
+#include <array>
+#include "GL/glew.h"
+#include "gl/Texture.hpp"
+#include "gl/Shader.hpp"
+#include "gl/ShaderProgram.hpp"
+#include "gl/BufferObject.hpp"
+#include "gl/VertexArray.hpp"
+#include "debug/Debug.hpp"
 
-void CheckSDLError() {
-#ifndef NDEBUG
-  auto error = SDL_GetError();
-  if (*error != '\0')
-  {
-    std::cout << "SDL error: " << error << "\n";
-    SDL_ClearError();
-  }
-#endif
+enum class GameState {
+  Running,
+  Quit,
+};
+
+// just a basic struct for managing our "scene"
+struct GameScene {
+  GameScene();
+
+  GameState State;
+  hst::Shader VertShader;
+  hst::Shader FragShader;
+  hst::ShaderProgram ShaderProg;
+  hst::VertexArray VAO;
+  hst::BufferObject VBO;
+};
+
+GameScene::GameScene()
+  : State(GameState::Running),
+    VertShader(hst::ShaderType::Vertex),
+    FragShader(hst::ShaderType::Fragment),
+    ShaderProg(), VBO(), VAO() {
+  VAO.Bind();
+
+  // upload vertex data to our VBO
+  std::array<float, 6> vertices {
+    -0.0f,  0.5f,
+    0.5f,  -0.5f,
+    -0.5f, -0.5f,
+  };
+  VBO.UploadData(vertices);
+
+  // load and compile vertex shader
+  VertShader.ContentsFromFile("data/shader/Unlit.vert");
+  VertShader.Compile();
+  hst::debug::CheckOpenGL();
+
+   // load and compile fragment shader
+  FragShader.ContentsFromFile("data/shader/Unlit.frag");
+  FragShader.Compile();
+  hst::debug::CheckOpenGL();
+
+  // attach shaders to shader program
+  ShaderProg.AttachShader(VertShader.GetId());
+  ShaderProg.AttachShader(FragShader.GetId());
+  hst::debug::CheckOpenGL();
+
+  // bind output location
+  ShaderProg.BindFragDataLocation(0, "OutColor");
+
+  // link shader program
+  ShaderProg.Link();
+
+  // points the position to the actual data
+  auto posAttrib = ShaderProg.GetAttrib("position");
+  posAttrib.Pointer(2, GL_FLOAT, GL_FALSE, 0, nullptr);
+  posAttrib.Enable();
 }
 
-void Update(float dt, bool* quit) {
+void Update(float dt, GameScene* data) {
+  // Handle events and input
   SDL_Event evt;
   while (SDL_PollEvent(&evt)) {
     switch (evt.type) {
     case SDL_KEYDOWN:
-      *quit = evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE;
+      if (evt.key.keysym.scancode == SDL_SCANCODE_ESCAPE) {
+        data->State = GameState::Quit;
+      }
       break;
     case SDL_QUIT:
-      *quit = true;
+      data->State = GameState::Quit;
       break;
     }
   }
+  data->VAO.Bind();
+  data->ShaderProg.Use();
+  glDrawArrays(GL_TRIANGLES, 0, 3);
+  hst::debug::CheckOpenGL();
 }
 
 void RunGameLoop(SDL_Window* window) {
@@ -40,19 +103,23 @@ void RunGameLoop(SDL_Window* window) {
 
   auto ti = clock::now();
   auto dt = clock::duration::zero();
-  auto quit = false;
-  while (!quit) {
+
+  GameScene gameData;
+
+  while (gameData.State == GameState::Running) {
     // clear window
     glClearColor(0.f, 0.f, 0.f, 1.f);
     glClear(GL_COLOR_BUFFER_BIT);
-    CheckSDLError();
 
     // update our entities or whatever we may have
-    Update(duration_cast<FloatSeconds>(dt).count(), &quit);
+    Update(duration_cast<FloatSeconds>(dt).count(), &gameData);
+    hst::debug::CheckOpenGL();
 
     //swap buffers
     SDL_GL_SwapWindow(window);
-    CheckSDLError();
+
+    hst::debug::CheckSDL();
+    hst::debug::CheckOpenGL();
 
     // calculate timing related operations
     const auto tf = clock::now();
@@ -79,17 +146,24 @@ bool InitializeContext(SDL_Window** window) {
     SDL_WINDOWPOS_UNDEFINED,
     1280,
     720,
-    SDL_WINDOW_OPENGL);
-  CheckSDLError();
+    SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN);
+  hst::debug::CheckSDL();
 
-  if (window == nullptr) {
+  if (*window == nullptr) {
     //TODO: error reporting mechanisms
     std::cout << "Unable to create window " << SDL_GetError() << "\n";
     return false;
   }
 
   auto context = SDL_GL_CreateContext(*window);
-  SDL_GL_MakeCurrent(*window, context);
+
+  glewExperimental = GL_TRUE;
+  const auto glewCode = glewInit();
+  if (glewCode != GLEW_OK) {
+    std::cerr << "Unable to initialize glew " << glewGetErrorString(glewCode);
+    return false;
+  }
+  hst::debug::CheckOpenGL();
 
   return true;
 }
