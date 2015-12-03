@@ -1,9 +1,11 @@
 #pragma once
 
 #include "GL/glew.h"
+#include "NonCopyable.hpp"
 
 namespace hst {
-struct Texture {
+
+struct Texture : private NonCopyable {
   Texture(const char* filename);
   virtual ~Texture();
 
@@ -16,4 +18,5 @@ private:
   int comp_;
   GLuint texId_;
 };
+
 } //namespace hst

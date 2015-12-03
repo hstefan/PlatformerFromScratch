@@ -28,7 +28,7 @@ void Texture::LoadTexture(const char* filename) {
     // generates new texture
     glGenTextures(1, &texId_);
     glBindTexture(GL_TEXTURE_2D, texId_);
-    
+
     // by default we are using linear filtering for minify and nearest for
     // magnify
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -37,7 +37,7 @@ void Texture::LoadTexture(const char* filename) {
     // RGB for 3 components, RGBA in case of 4
     if (comp_ == 3)
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width_, height_, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
-    else if(comp_ == 4)
+    else if (comp_ == 4)
       glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width_, height_, 0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
 
     // unbind texture

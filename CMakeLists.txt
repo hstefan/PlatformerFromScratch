@@ -31,11 +31,11 @@ include_directories(src)
 
 set(SOURCES
   src/main.cpp
-  src/Texture.cpp
+  src/gl/Texture.cpp
 )
 
 set(HEADERS
-  src/Texture.hpp
+  src/gl/Texture.hpp
   src/NonCopyable.hpp
   src/debug/Debug.hpp
 )
