@@ -33,11 +33,13 @@ set(SOURCES
   src/main.cpp
   src/gl/Texture.cpp
   src/gl/Shader.cpp
+  src/gl/BufferObject.cpp
 )
 
 set(HEADERS
   src/gl/Texture.hpp
   src/gl/Shader.hpp
+  src/gl/BufferObject.hpp
   src/NonCopyable.hpp
   src/debug/Debug.hpp
 )
